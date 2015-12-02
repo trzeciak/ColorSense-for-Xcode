@@ -64,8 +64,8 @@ const NSInteger OMColorPandelHexMode = 65535;
 		_rgbaNSColorRegex = [NSRegularExpression regularExpressionWithPattern:@"\\[\\s*NSColor\\s+colorWith(Calibrated|Device)Red:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s+green:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s+blue:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s+alpha:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s*\\]" options:0 error:NULL];
 		_whiteNSColorRegex = [NSRegularExpression regularExpressionWithPattern:@"\\[\\s*NSColor\\s+colorWith(Calibrated|Device)White:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s+alpha:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s*\\]" options:0 error:NULL];
 		_constantColorRegex = [NSRegularExpression regularExpressionWithPattern:@"\\[\\s*(UI|NS)Color\\s+(black|darkGray|lightGray|white|gray|red|green|blue|cyan|yellow|magenta|orange|purple|brown|clear)Color\\s*\\]" options:0 error:NULL];
-        _rgbHexUIColorRegex = [NSRegularExpression regularExpressionWithPattern:@"\\[\\s*UIColor\\s+colorWithRGBHex:\\s*(0x[A-Fa-f0-9]{6})?\\s*\\]" options:0 error:NULL];
-        _rgbHexAlphaUIColorRegex = [NSRegularExpression regularExpressionWithPattern:@"\\[\\s*UIColor\\s+colorWithRGBHex:\\s*(0x[A-Fa-f0-9]{6})?\\s*+alpha:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s*\\]" options:0 error:NULL];
+        _rgbHexUIColorRegex = [NSRegularExpression regularExpressionWithPattern:@"\\[\\s*UIColor\\s+colorWithHex:\\s*@\"([A-Fa-f0-9]{6})?\"\\s*\\]" options:0 error:NULL];
+        _rgbHexAlphaUIColorRegex = [NSRegularExpression regularExpressionWithPattern:@"\\[\\s*UIColor\\s+colorWithHex:\\s*@\"([A-Fa-f0-9]{6})?\"\\s*+alpha:\\s*([0-9]*\\.?[0-9]*f?)\\s*(\\/\\s*[0-9]*\\.?[0-9]*f?)?\\s*\\]" options:0 error:NULL];
 	}
 	return self;
 }
@@ -522,8 +522,9 @@ const NSInteger OMColorPandelHexMode = 65535;
 	color = [color colorUsingColorSpace:[NSColorSpace genericRGBColorSpace]];
 	[color getRed:&red green:&green blue:&blue alpha:&alpha];
     
-    BOOL showAsHex = [NSColorPanel sharedColorPanel].mode == OMColorPandelHexMode;
-    
+    BOOL showAsHex = YES;
+//    [NSColorPanel sharedColorPanel].mode == OMColorPandelHexMode;
+
 	if (red >= 0) {
         if (!showAsHex) {
             for (NSString *colorName in _constantColorsByName) {
@@ -570,9 +571,9 @@ const NSInteger OMColorPandelHexMode = 65535;
             }
         } else {
             if (alpha == 1.0f) {
-                colorString = [NSString stringWithFormat:@"[UIColor colorWithRGBHex:0x%02X%02X%02X]", (unsigned int)(red*255),(unsigned int)(green*255),(unsigned int)(blue*255)];
+                colorString = [NSString stringWithFormat:@"[UIColor colorWithHex:@\"%02x%02x%02x\"]", (unsigned int)(red*255),(unsigned int)(green*255),(unsigned int)(blue*255)];
             } else {
-                colorString = [NSString stringWithFormat:@"[UIColor colorWithRGBHex:0x%02X%02X%02X alpha:%.3f]", (unsigned int)(red*255),(unsigned int)(green*255),(unsigned int)(blue*255),alpha];
+                colorString = [NSString stringWithFormat:@"[UIColor colorWithHex:@\"%02x%02x%02x\" alpha:%.2f]", (unsigned int)(red*255),(unsigned int)(green*255),(unsigned int)(blue*255),alpha];
             }
         }
 	}
